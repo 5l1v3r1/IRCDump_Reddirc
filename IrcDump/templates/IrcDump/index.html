@@ -1,0 +1,126 @@
+{% load staticfiles %}    
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The ultimate RedIRC</title>
+	
+	<link href="{% static "IrcDump/css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "IrcDump/css/style.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "IrcDump/css/font-awesome.min.css" %}" rel="stylesheet">
+	<script src="{% static "IrcDump/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "IrcDump/js/jquery-1.9.1.min.js" %}"></script>
+
+  </head>
+  <body onload="reload_entries('');">
+    <script type="text/javascript">
+	
+	var u = '';
+	
+	function reload_entries(ur){
+		// remember url for reloading after rating
+		u=ur;
+		// get entries
+		$.ajax({
+			'url': "/entries/?" + u,
+            'success' : function(data) { $('.entries').html(data); }
+            });
+	}
+	
+	// rate and refresh list
+	function rate(id, action) {
+			$.ajax({
+				'url': id + "/rate/" + action,
+                'success' : function() { reload_entries(u); }
+            });
+	}
+	
+      $(function(){
+
+        $('.content').hide();
+		
+		// navigate
+		$('.nav').click(function(e){ $(e.target).closest('.navitem').toggleClass('active');	});
+		
+        // change content
+		$('.entries').click(function(e){
+            $entry = $(e.target).closest('.entry');
+			
+            // Perhapse we selected the same entry again? -> Deselect it.
+            if($entry.hasClass('activeEntry')){
+              $('.activeEntry').toggleClass('activeEntry');
+              $('.content').hide();  
+              return;            
+            }
+			
+            // Deselect any selected
+            $('.activeEntry').toggleClass('activeEntry');
+			// Select new entry
+            $entry.toggleClass('activeEntry');
+			
+			$.ajax({
+                    'url': $entry.attr('lid') + "/content",
+                    'success' : function(data) {
+						 $('.content').html(data);
+						 $('.content').show();
+                    }
+            });
+        });
+      });
+    </script>
+
+    <!-- Nav -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/">RedIRC</a>
+              <ul class="nav">
+				<li><a href="#" class="navitem" onclick="reload_entries('a');">Archive</a></li>
+				<li><a href="#" class="navitem" onclick="reload_entries('p');">Popular</a></li>
+              </ul>
+			  
+			   <!-- Search -->
+              <form class="navbar-search pull-right" onsubmit="reload_entries('s='+this.s.value);this.s.value='';return false;">
+                <input type="text" class="search-query span2" placeholder="Search" name="s">
+              </form>
+          </div>
+
+          <!-- Categories -->
+<!--           <div class="container">
+            <div class="categories .box-shadow">
+              <a href="#" class="category"><span>news</span></a>
+              <a href="#" class="category"><span>funny</span></a>
+              <a href="#" class="category"><span>security</span></a>
+              <a href="#" class="category"><span>games</span></a>
+              <a href="#" class="category"><span>wtf</span></a>
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+
+
+    <!-- Body -->
+    <div class="container">
+      <div class="container-fluid contentbody">
+        <div class="row-fluid">
+
+          <!-- Entries -->
+          <div class="span5 entries">
+		  
+          </div>
+
+          <!-- Content -->
+          <div class="span6 content">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+
+{% if selected	%}
+
+<div class="contenthead">
+	<span class="title">{{ selected.description }}</span>
+	<span class="submitlabel">by <span class="submitter">{{ selected.user }}</span> on <span class="date">{{ selected.date }}</span></span>
+</div>
+
+<div class="actual">
+	<a href="{{ selected.url }}" target="_blank"><span class="description">{{ selected.url|truncatechars:70 }}</span><br/></a>
+</div>
+
+<div class="actions pull-right">
+	<button class="btn default"><i class="icon-twitter"></i> tweet</button>
+	<button class="btn default"><i class="icon-facebook-sign"></i> share</button>              
+	<button class="btn default"><i class="icon-link"></i> direct link</button>
+</div>
+
+<div id="disqus_thread"></div>
+
+<script type="text/javascript">
+  var disqus_shortname = 'ircdump';
+  (function() {
+	  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+{% else %}
+	<p>Content not found.</p>
+	
+{% endif %}
+
+
+
+
+
+

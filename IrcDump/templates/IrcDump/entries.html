@@ -1,0 +1,42 @@
+{% load url from future %}
+{% load staticfiles %}    
+
+<ol class="entryList">
+<li class='separator'>{{ title_results }}</li>
+{% if pop_links %}
+{% for link in pop_links %}
+	<li class="entry" lid="{{ link.id }}">
+	{% if link.thumburl %}
+		<img src="{% static link.thumburl %}" class="preview">
+	{% endif %}
+	<a href="#" class="main">
+			<span class="title">{{ link.description|truncatechars:35 }}</span>
+	</a>
+		<span class="description"></span>
+	<span class="comments muted"> {{ link.date|date:"d-M-Y" }}</span>
+	<span class="score">{{ link.rating|floatformat:2 }}</span>
+	
+	<div class="votes" lid="{{ link.id }}">
+	  <a href="#" onclick="rate({{ link.id }},'+');" id="+" class="icon-arrow-up"></a>
+	  <a href="#" onclick="rate({{ link.id }},'-');" id="-" class="icon-arrow-down"></a>
+	</div>
+	
+	</li>    
+{% endfor %}
+
+	{% if prev_results >= 0 %}
+		<a href="#" onclick="reload_entries(u+'&f={{ prev_results }}')" class="icon-arrow-left"></a>
+	{% endif %}
+	{% if next_results %}
+		<a href="#" onclick="reload_entries(u+'&f={{ next_results }}')" class="icon-arrow-right"></a>
+	{% endif %}
+	
+{% else %}
+	<p>No links are available.</p>
+{% endif %}
+</ol>
+
+
+
+
+
