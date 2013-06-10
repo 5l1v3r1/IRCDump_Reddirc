@@ -20,11 +20,7 @@
 
 <script type="text/javascript">
   var disqus_shortname = 'ircdump';
-<<<<<<< HEAD
-  var disqus_identifier = '{{ selected.user+selected.date|date:"c" }}'; 
-=======
-  var disqus_identifier = '{{ selected.user|add:selected.date|date:"c"}}'; 
->>>>>>> 654b2f87dfbf40d3e018295070aeae12e8d847cd
+  var disqus_identifier = '{{ selected.user }}{{ selected.date|date:"c" }}'; 
   (function() {
 	  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
 	  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
