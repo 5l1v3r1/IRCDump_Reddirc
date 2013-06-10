@@ -14,7 +14,7 @@
 	</a>
 		<span class="description"></span>
 	<span class="comments muted"> {{ link.date|date:"d-M-Y" }}</span>
-	<span class="score">{{ link.rating|floatformat:2 }}</span>
+	<span class="score">{{ link.rating|floatformat:0 }}</span>
 	
 	<div class="votes" lid="{{ link.id }}">
 	  <a href="#" onclick="rate({{ link.id }},'+');" id="+" class="icon-arrow-up"></a>
