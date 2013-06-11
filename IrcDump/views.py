@@ -98,12 +98,7 @@ def get_query(query_string, search_fields):
 
 	
 # rate een link
-# als iemand stemt, wordt de vorige vote verwijderd
-# dan dilute de vote over (1 / votes) naar de vorige link + de huidige
-# na vier dagen horen de votes gereset te worden
-
-# dit systeem faalt nog: user kan steeds blijven voten. vote wordt wel steeds minder waard.
-# wat ook kan: steeds vorige votepoints / 2, maar dat is een saai systeem
+# 5 votes, 2 dagen
 def rate(request, link_id, updown):
 	# get link
 	try:
@@ -116,35 +111,23 @@ def rate(request, link_id, updown):
 	addr = get_client_ip(request)
 	try:
 		userprofile = Voter.objects.get(ip=addr)
-		# reset vote profile is first vote is older than 4 days
+		# reset vote profile is first vote is older than 2 days
 		if datetime.now().replace(tzinfo=timezone.utc) >= userprofile.votedate:
 			userprofile.votes = 1
-			userprofile.votedate = (datetime.now() + timedelta(days=4)).replace(tzinfo=timezone.utc)
-		# no voting on the same link twice in a row, or more than 20 votes
-		if int(userprofile.lastlink) == int(link_id) or userprofile.votes > 20:
+			userprofile.votedate = (datetime.now() + timedelta(days=2)).replace(tzinfo=timezone.utc)
+		# no mote than 5 votes
+		if userprofile.votes > 5:
 			return HttpResponse("0")
-		# remove old vote, add diluted vote
-		else:
-			past_choice = Link.objects.get(pk=userprofile.lastlink)
-			if userprofile.lastdo == '+':
-				past_choice.rating -= Decimal(1/userprofile.votes)
-				past_choice.rating += Decimal(1/(userprofile.votes+1))
-			if userprofile.lastdo == '-':
-				past_choice.rating += Decimal(1/userprofile.votes)
-				past_choice.rating -= Decimal(1/(userprofile.votes+1))
-			past_choice.save()
 	except:
-		userprofile = Voter(ip=addr, votes=0, lastlink=link_id, votedate=(datetime.now() + timedelta(days=4)).replace(tzinfo=timezone.utc))
+		userprofile = Voter(ip=addr, votes=0, lastlink=link_id, votedate=(datetime.now() + timedelta(days=2)).replace(tzinfo=timezone.utc))
 		
 	# change rating new link
 	userprofile.votes += 1
-	votepoints = Decimal(1/userprofile.votes)
+	votepoints = 1
 
 	if updown == '+':	selected_choice.rating += votepoints
 	if updown == '-':	selected_choice.rating -= votepoints
 	
-	userprofile.lastdo=updown
-	userprofile.lastlink =  link_id
 	userprofile.save()
 	selected_choice.save()
 	return HttpResponse(str(selected_choice.rating))
