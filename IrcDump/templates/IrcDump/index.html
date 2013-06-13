@@ -13,9 +13,18 @@
 
   </head>
   <body onload="reload_entries('');">
+
     <script type="text/javascript">
+	// rating and entries
 	
 	var u = '';
+	
+	// replace page index
+	function replace_f(num)
+	{
+		if (u.indexOf("f") !== -1)	return u.replace(/&f=([0-9]+)/, '&f=' + num);	// you did not see this code, *wave*
+		else						return u + '&f=' + num;
+	}
 	
 	function reload_entries(ur){
 		// remember url for reloading after rating
@@ -45,6 +54,7 @@
         // change content
 		$('.entries').click(function(e){
             $entry = $(e.target).closest('.entry');
+			if ($entry.attr('lid') == undefined)	return false;
 			
             // Perhapse we selected the same entry again? -> Deselect it.
             if($entry.hasClass('activeEntry')){
@@ -57,7 +67,7 @@
             $('.activeEntry').toggleClass('activeEntry');
 			// Select new entry
             $entry.toggleClass('activeEntry');
-			
+
 			$.ajax({
                     'url': $entry.attr('lid') + "/content",
                     'success' : function(data) {
@@ -122,5 +132,20 @@
         </div>
       </div>
     </div>
+	
+	<script type="text/javascript">
+	// disqus comment count
+
+	var disqus_shortname = 'ircdump'; // required: replace example with your forum shortname
+
+	/* * * DON'T EDIT BELOW THIS LINE * * */
+	(function () {
+	var s = document.createElement('script'); s.async = true;
+	s.type = 'text/javascript';
+	s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+	(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+	}());
+	</script> 
+	
   </body>
 </html>
